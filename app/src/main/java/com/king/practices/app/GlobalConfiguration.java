@@ -176,6 +176,7 @@ public class GlobalConfiguration implements ConfigModule {
                 //leakCanary内存泄露检查
                 ArmsUtils.obtainAppComponentFromContext(application).extras().put(RefWatcher.class.getName(), BuildConfig.USE_CANARY ? LeakCanary.install(application) : RefWatcher.DISABLED);
                 //扩展 AppManager 的远程遥控功能
+
 //                ArmsUtils.obtainAppComponentFromContext(application).appManager().setCurrentActivity();
             }
 
