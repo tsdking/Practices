@@ -25,6 +25,7 @@ import com.jess.arms.di.module.GlobalConfigModule;
 import com.jess.arms.http.GlobalHttpHandler;
 import com.jess.arms.http.RequestInterceptor;
 import com.jess.arms.integration.ConfigModule;
+import com.jess.arms.utils.ArmsUtils;
 import com.king.practices.BuildConfig;
 import com.king.practices.R;
 import com.king.practices.mvp.model.api.Api;
@@ -41,6 +42,7 @@ import java.net.UnknownHostException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import butterknife.ButterKnife;
 import io.rx_cache2.internal.RxCache;
 import me.jessyan.progressmanager.ProgressManager;
 import me.jessyan.rxerrorhandler.handler.listener.ResponseErrorListener;
@@ -168,17 +170,13 @@ public class GlobalConfiguration implements ConfigModule {
             public void onCreate(Application application) {
                 if (BuildConfig.LOG_DEBUG) {
                     Timber.plant(new Timber.DebugTree());
+                    ButterKnife.setDebug(true);
                 }
                 // AppDelegate.Lifecycle 的所有方法都会在基类Application对应的生命周期中被调用,所以在对应的方法中可以扩展一些自己需要的逻辑
-                if (application instanceof App) {
-                    ((App) application)
-                            .getAppComponent()
-                            .extras()
-                            .put(
-                                    RefWatcher.class.getName(),
-                                    BuildConfig.USE_CANARY ? LeakCanary.install(application) : RefWatcher.DISABLED
-                            );
-                }
+                //leakCanary内存泄露检查
+                ArmsUtils.obtainAppComponentFromContext(application).extras().put(RefWatcher.class.getName(), BuildConfig.USE_CANARY ? LeakCanary.install(application) : RefWatcher.DISABLED);
+                //扩展 AppManager 的远程遥控功能
+//                ArmsUtils.obtainAppComponentFromContext(application).appManager().setCurrentActivity();
             }
 
             @Override
