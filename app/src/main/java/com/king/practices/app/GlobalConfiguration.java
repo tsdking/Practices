@@ -15,7 +15,6 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonIOException;
 import com.google.gson.JsonParseException;
 import com.jess.arms.base.App;
 import com.jess.arms.base.delegate.AppLifecycles;
@@ -55,12 +54,18 @@ import retrofit2.Retrofit;
 import timber.log.Timber;
 
 /**
- * Created by admin on 2017/9/2.
+ * des:全局配置类
+ * author:xqf
+ * date:2017/9/2 19:00
  */
-
 public class GlobalConfiguration implements ConfigModule {
     @Override
     public void applyOptions(Context context, GlobalConfigModule.Builder builder) {
+        if (!BuildConfig.LOG_DEBUG) {
+            //Release 时,让框架不再打印 Http 请求和响应的信息
+            builder.printHttpLogLevel(RequestInterceptor.Level.NONE);
+        }
+
         builder.baseurl(Api.APP_DOMAIN)
                 .globalHttpHandler(new GlobalHttpHandler() {
                     //用来处理http响应结果
@@ -117,7 +122,7 @@ public class GlobalConfiguration implements ConfigModule {
                         } else if (t instanceof HttpException) {
                             HttpException httpException = (HttpException) t;
                             msg = convertStatusCode(httpException);
-                        } else if (t instanceof JsonParseException || t instanceof ParseException || t instanceof JSONException || t instanceof JsonIOException) {
+                        } else if (t instanceof JsonParseException || t instanceof ParseException || t instanceof JSONException) {
                             msg = "数据解析错误";
                         }
                         UiUtils.snackbarText(msg);
@@ -163,21 +168,29 @@ public class GlobalConfiguration implements ConfigModule {
         lifecycles.add(new AppLifecycles() {
             @Override
             public void attachBaseContext(Context base) {
-
+                // MultiDex.install(base);
+                // 这里比 onCreate 先执行,常用于 MultiDex 初始化,插件化框架的初始化
             }
 
             @Override
             public void onCreate(Application application) {
-                if (BuildConfig.LOG_DEBUG) {
+                if (BuildConfig.LOG_DEBUG) {//Timber初始化
+                    //Timber 是一个日志框架容器,外部使用统一的Api,内部可以动态的切换成任何日志框架(打印策略)进行日志打印
+                    //并且支持添加多个日志框架(打印策略),做到外部调用一次 Api,内部却可以做到同时使用多个策略
+                    //比如添加三个策略,一个打印日志,一个将日志保存本地,一个将日志上传服务器
                     Timber.plant(new Timber.DebugTree());
+                    // 如果你想将框架切换为 Logger 来打印日志,请使用下面的代码,如想切换为其他日志框架请根据下面的方式扩展
+//                    Logger.addLogAdapter(new AndroidLogAdapter());
+//                    Timber.plant(new Timber.DebugTree() {
+//                        @Override
+//                        protected void log(int priority, String tag, String message, Throwable t) {
+//                            Logger.log(priority, tag, message, t);
+//                        }
+//                    });
                     ButterKnife.setDebug(true);
                 }
-                // AppDelegate.Lifecycle 的所有方法都会在基类Application对应的生命周期中被调用,所以在对应的方法中可以扩展一些自己需要的逻辑
                 //leakCanary内存泄露检查
                 ArmsUtils.obtainAppComponentFromContext(application).extras().put(RefWatcher.class.getName(), BuildConfig.USE_CANARY ? LeakCanary.install(application) : RefWatcher.DISABLED);
-                //扩展 AppManager 的远程遥控功能
-
-//                ArmsUtils.obtainAppComponentFromContext(application).appManager().setCurrentActivity();
             }
 
             @Override
@@ -191,39 +204,51 @@ public class GlobalConfiguration implements ConfigModule {
     public void injectActivityLifecycle(Context context, List<Application.ActivityLifecycleCallbacks> lifecycles) {
         lifecycles.add(new Application.ActivityLifecycleCallbacks() {
             @Override
-            public void onActivityCreated(final Activity activity, Bundle bundle) {
+            public void onActivityCreated( Activity activity, Bundle bundle) {
                 Timber.w(activity + "-onActivityCreate");
-                //支持toolbar
-                if (activity.findViewById(R.id.toolbar) != null) {
-                    if (activity instanceof AppCompatActivity) {
-                        ((AppCompatActivity) activity).setSupportActionBar((Toolbar) activity.findViewById(R.id.toolbar));
-                        ((AppCompatActivity) activity).getSupportActionBar().setDisplayShowTitleEnabled(false);
-                    } else {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            activity.setActionBar((android.widget.Toolbar) activity.findViewById(R.id.toolbar));
-                            activity.getActionBar().setDisplayShowTitleEnabled(false);
-                        }
-                    }
-                }
-                //设置toolbar的title 直接在在 AndroidManifest.xml 中设置 Label即可
-                if (activity.findViewById(R.id.toolbar_title) != null) {
-                    ((TextView) activity.findViewById(R.id.toolbar_title)).setText(activity.getTitle());
-                }
-                //设置toolbar的返回关闭
-                if (activity.findViewById(R.id.toolbar_back) != null) {
-                    activity.findViewById(R.id.toolbar_back).setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            activity.onBackPressed();
-                        }
-                    });
-                }
-
             }
 
             @Override
-            public void onActivityStarted(Activity activity) {
+            public void onActivityStarted(final Activity activity) {
                 Timber.w(activity + " - onActivityStart ");
+                if (!activity.getIntent().getBooleanExtra("isInitToolbar", false)) {
+                    //由于加强框架的兼容性,故将 setContentView 放到 onActivityCreated 之后,onActivityStarted 之前执行
+                    //而 findViewById 必须在 Activity setContentView() 后才有效,所以将以下代码从之前的 onActivityCreated 中移动到 onActivityStarted 中执行
+                    activity.getIntent().putExtra("isInitToolbar", true);
+                    //这里全局给Activity设置toolbar和title,你想象力有多丰富,这里就有多强大,以前放到BaseActivity的操作都可以放到这里
+                    if (activity.findViewById(R.id.toolbar) != null) {
+                        if (activity instanceof AppCompatActivity) {
+                            ((AppCompatActivity) activity).setSupportActionBar((Toolbar) activity.findViewById(R.id.toolbar));
+                            if (((AppCompatActivity) activity).getSupportActionBar() != null) {
+                                try {
+                                    ((AppCompatActivity) activity).getSupportActionBar().setDisplayShowTitleEnabled(false);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        } else {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                if (activity.findViewById(R.id.toolbar) instanceof Toolbar){
+                                    activity.setActionBar((android.widget.Toolbar) activity.findViewById(R.id.toolbar));
+                                }
+                                if (activity.getActionBar() != null) {
+                                    activity.getActionBar().setDisplayShowTitleEnabled(false);
+                                }
+                            }
+                        }
+                    }
+                    if (activity.findViewById(R.id.toolbar_title) != null) {
+                        ((TextView) activity.findViewById(R.id.toolbar_title)).setText(activity.getTitle());
+                    }
+                    if (activity.findViewById(R.id.toolbar_back) != null) {
+                        activity.findViewById(R.id.toolbar_back).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                activity.onBackPressed();
+                            }
+                        });
+                    }
+                }
             }
 
             @Override
