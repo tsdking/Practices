@@ -191,8 +191,15 @@ public class GlobalConfiguration implements ConfigModule {
     public void injectActivityLifecycle(Context context, List<Application.ActivityLifecycleCallbacks> lifecycles) {
         lifecycles.add(new Application.ActivityLifecycleCallbacks() {
             @Override
-            public void onActivityCreated(final Activity activity, Bundle bundle) {
+            public void onActivityCreated( Activity activity, Bundle bundle) {
                 Timber.w(activity + "-onActivityCreate");
+
+
+            }
+
+            @Override
+            public void onActivityStarted( final Activity activity) {
+                Timber.w(activity + " - onActivityStart ");
                 //支持toolbar
                 if (activity.findViewById(R.id.toolbar) != null) {
                     if (activity instanceof AppCompatActivity) {
@@ -218,12 +225,6 @@ public class GlobalConfiguration implements ConfigModule {
                         }
                     });
                 }
-
-            }
-
-            @Override
-            public void onActivityStarted(Activity activity) {
-                Timber.w(activity + " - onActivityStart ");
             }
 
             @Override
