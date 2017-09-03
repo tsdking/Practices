@@ -62,6 +62,7 @@ dependencies {
     compile rootProject.ext.dependencies["appcompat-v7"]
     provided rootProject.ext.dependencies["javax.annotation"]
     compile rootProject.ext.dependencies["progressmanager"]
+    compile rootProject.ext.dependencies["retrofit-url-manager"]
     annotationProcessor rootProject.ext.dependencies["dagger2-compiler"]
 //    view
     annotationProcessor(rootProject.ext.dependencies["butterknife-compiler"]) {

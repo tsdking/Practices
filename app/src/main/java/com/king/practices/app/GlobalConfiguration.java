@@ -28,7 +28,6 @@ import com.jess.arms.utils.ArmsUtils;
 import com.king.practices.BuildConfig;
 import com.king.practices.R;
 import com.king.practices.mvp.model.api.Api;
-import com.king.practices.utils.UiUtils;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
 
@@ -44,6 +43,7 @@ import java.util.concurrent.TimeUnit;
 import butterknife.ButterKnife;
 import io.rx_cache2.internal.RxCache;
 import me.jessyan.progressmanager.ProgressManager;
+import me.jessyan.retrofiturlmanager.RetrofitUrlManager;
 import me.jessyan.rxerrorhandler.handler.listener.ResponseErrorListener;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -67,6 +67,15 @@ public class GlobalConfiguration implements ConfigModule {
         }
 
         builder.baseurl(Api.APP_DOMAIN)
+                //如果 BaseUrl 在 App 启动时不能确定,需要请求服务器接口动态获取,请使用以下代码
+                //并且使用 Okhttp (AppComponent中提供) 请求服务器获取到正确的 BaseUrl 后赋值给 GlobalConfiguration.sDomain
+                //切记整个过程必须在第一次调用 Retrofit 接口之前完成,如果已经调用过 Retrofit 接口,将不能动态切换 BaseUrl
+//                .baseurl(new BaseUrl() {
+//                    @Override
+//                    public HttpUrl url() {
+//                        return HttpUrl.parse(sDomain);
+//                    }
+//                })
                 .globalHttpHandler(new GlobalHttpHandler() {
                     //用来处理http响应结果
                     //这里可以提供一个全局处理Http请求和响应结果的处理类
@@ -85,13 +94,23 @@ public class GlobalConfiguration implements ConfigModule {
                                 String avatar_url = object.getString("avatar_url");
                                 Timber.w("Result ------> " + login + "    ||   Avatar_url------> " + avatar_url);
                             }
-
                         } catch (JSONException e) {
                             //                            e.printStackTrace();
                             Timber.w("onHttpResultResponse: Value cannot be converted to JSONArray");
                             return response;
                         }
-                        return null;
+                          /* 这里如果发现token过期,可以先请求最新的token,然后在拿新的token放入request里去重新请求
+                        注意在这个回调之前已经调用过proceed,所以这里必须自己去建立网络请求,如使用okhttp使用新的request去请求
+                        create a new request and modify it accordingly using the new token
+                        Request newRequest = chain.request().newBuilder().header("token", newToken)
+                                             .build();
+
+                        retry the request
+
+                        response.body().close();
+                        如果使用okhttp将新的请求,请求成功后,将返回的response  return出去即可
+                        如果不需要返回新的结果,则直接把response参数返回出去 */
+                        return response;
                     }
 
                     // 这里可以在请求服务器之前可以拿到request,做一些操作
@@ -125,7 +144,7 @@ public class GlobalConfiguration implements ConfigModule {
                         } else if (t instanceof JsonParseException || t instanceof ParseException || t instanceof JSONException) {
                             msg = "数据解析错误";
                         }
-                        UiUtils.snackbarText(msg);
+                        ArmsUtils.snackbarText(msg);
                     }
                 })
                 .gsonConfiguration(new AppModule.GsonConfiguration() {//自定义配置Gson的参数
@@ -150,8 +169,9 @@ public class GlobalConfiguration implements ConfigModule {
                         //自定义配置Okhttp的参数
                         builder.writeTimeout(10, TimeUnit.SECONDS);
                         //开启使用一行代码监听 Retrofit／Okhttp 上传下载进度监听,以及 Glide 加载进度监听
-                        //详细使用方法查看 https://github.com/JessYanCoding/ProgressManager
                         ProgressManager.getInstance().with(builder);
+                        //详细使用方法查看 https://github.com/JessYanCoding/ProgressManager
+                        RetrofitUrlManager.getInstance().with(builder);
                     }
                 })
                 .rxCacheConfiguration(new ClientModule.RxCacheConfiguration() {
@@ -204,7 +224,7 @@ public class GlobalConfiguration implements ConfigModule {
     public void injectActivityLifecycle(Context context, List<Application.ActivityLifecycleCallbacks> lifecycles) {
         lifecycles.add(new Application.ActivityLifecycleCallbacks() {
             @Override
-            public void onActivityCreated( Activity activity, Bundle bundle) {
+            public void onActivityCreated(Activity activity, Bundle bundle) {
                 Timber.w(activity + "-onActivityCreate");
             }
 
@@ -228,7 +248,7 @@ public class GlobalConfiguration implements ConfigModule {
                             }
                         } else {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                if (activity.findViewById(R.id.toolbar) instanceof Toolbar){
+                                if (activity.findViewById(R.id.toolbar) instanceof Toolbar) {
                                     activity.setActionBar((android.widget.Toolbar) activity.findViewById(R.id.toolbar));
                                 }
                                 if (activity.getActionBar() != null) {

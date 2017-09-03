@@ -1,4 +1,4 @@
-package com.king.practices.utils;
+package com.king.practices.app.utils;
 
 import android.app.Activity;
 import android.content.Context;
