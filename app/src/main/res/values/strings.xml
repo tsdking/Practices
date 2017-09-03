@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Practices</string>
+    <string name="app_real_name">恋溪</string>
     <string name="label_main">主页面</string>
     <string name="label_splash">启动页</string>
 </resources>
