@@ -39,6 +39,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
     @Override
     public void initData(Bundle savedInstanceState) {
         navView=findViewById(R.id.bnve);
+
         navView.enableShiftingMode(false);
         navView.enableAnimation(false);
         navView.enableItemShiftingMode(false);
