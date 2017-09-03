@@ -34,7 +34,7 @@
         android:textSize="18dp"
         android:textColor="#fff"
         android:layout_gravity="center"
-        tools:text="MVPArt"/>
+        tools:text="title"/>
 
 
 </com.jess.arms.widget.autolayout.AutoToolbar>
