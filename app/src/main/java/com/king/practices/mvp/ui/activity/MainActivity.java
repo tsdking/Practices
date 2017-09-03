@@ -11,11 +11,15 @@ import com.king.practices.di.component.DaggerMainComponent;
 import com.king.practices.di.module.MainModule;
 import com.king.practices.mvp.contract.MainContract;
 import com.king.practices.mvp.presenter.MainPresenter;
+import com.king.practices.mvp.ui.widget.BottomNavigation;
 import com.tbruyelle.rxpermissions2.RxPermissions;
+
+import butterknife.BindView;
 
 public class MainActivity extends BaseActivity<MainPresenter> implements MainContract.View {
 
     private RxPermissions mRxPermissions;
+    private BottomNavigation navView;
 
     @Override
     public void setupActivityComponent(AppComponent appComponent) {
@@ -34,7 +38,11 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
 
     @Override
     public void initData(Bundle savedInstanceState) {
-
+        navView=findViewById(R.id.bnve);
+        navView.enableShiftingMode(false);
+        navView.enableAnimation(false);
+        navView.enableItemShiftingMode(false);
+        navView.setCurrentItem(0);
     }
 
     @Override

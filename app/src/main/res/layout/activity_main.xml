@@ -11,7 +11,7 @@
         android:layout_height="0dp"
         android:layout_weight="1" />
 
-    <com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx
+    <com.king.practices.mvp.ui.widget.BottomNavigation
         android:id="@+id/bnve"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
