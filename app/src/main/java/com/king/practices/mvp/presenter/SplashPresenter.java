@@ -48,7 +48,7 @@ public class SplashPresenter extends BasePresenter<SplashContract.Model, SplashC
     }
 
     public void toMainPager() {
-        Disposable subscribe = Observable.timer(2, TimeUnit.SECONDS)
+        Disposable subscribe = Observable.timer(1, TimeUnit.SECONDS)
                 .subscribe(new Consumer<Long>() {
                     @Override
                     public void accept(Long aLong) throws Exception {

@@ -5,12 +5,6 @@
     android:layout_height="match_parent"
     android:background="@drawable/bg">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="@string/app_real_name"
-        android:textSize="@dimen/sp_30" />
 
 
 </RelativeLayout>
