@@ -17,6 +17,7 @@ import com.king.practices.mvp.contract.MainContract;
 import com.king.practices.mvp.presenter.MainPresenter;
 import com.king.practices.mvp.ui.adapter.MainPagerAdapter;
 import com.king.practices.mvp.ui.widget.BottomNavigation;
+import com.king.practices.mvp.ui.widget.XViewPager;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import butterknife.BindView;
@@ -25,7 +26,7 @@ import butterknife.BindView;
 public class MainActivity extends BaseActivity<MainPresenter> implements MainContract.View, BottomNavigationView.OnNavigationItemSelectedListener {
 
     @BindView(R.id.viewPager)
-    ViewPager viewPager;
+    XViewPager viewPager;
     @BindView(R.id.bottom_nav)
     BottomNavigation navView;
     private RxPermissions mRxPermissions;
@@ -54,8 +55,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         navView.enableItemShiftingMode(false);
         navView.setCurrentItem(0);
         navView.setOnNavigationItemSelectedListener(this);
-        //设置Viewpager
-        viewPager.setAdapter(new MainPagerAdapter());
+        mPresenter.getData();
         navView.setupWithViewPager(viewPager, false);
     }
 
@@ -85,12 +85,17 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
     }
 
     @Override
+    public void setAdapter(MainPagerAdapter adapter) {
+        viewPager.setAdapter(adapter);
+    }
+
+    @Override
     public RxPermissions getRxPermissions() {
         return mRxPermissions;
     }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        return false;
+        return true;
     }
 }

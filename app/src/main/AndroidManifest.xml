@@ -30,10 +30,6 @@
             android:value="1280" />
 
         <activity
-            android:name=".mvp.ui.activity.MainActivity"
-            android:label="@string/label_main" />
-
-        <activity
             android:name=".mvp.ui.activity.SplashActivity"
             android:label="@string/app_real_name">
             <intent-filter>
@@ -42,6 +38,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".mvp.ui.activity.MainActivity"
+            android:label="@string/label_main" />
     </application>
+
 
 </manifest>
