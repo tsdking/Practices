@@ -1,17 +1,11 @@
 package com.king.practices.mvp.presenter;
 
 import android.app.Application;
-import android.support.v4.app.FragmentActivity;
 
-import com.jess.arms.base.BaseFragment;
 import com.jess.arms.di.scope.ActivityScope;
 import com.jess.arms.integration.AppManager;
 import com.jess.arms.mvp.BasePresenter;
 import com.king.practices.mvp.contract.MainContract;
-import com.king.practices.mvp.ui.adapter.MainPagerAdapter;
-import com.king.practices.mvp.ui.fragment.TabOneFFragment;
-
-import java.util.ArrayList;
 
 import javax.inject.Inject;
 
@@ -45,16 +39,5 @@ public class MainPresenter extends BasePresenter<MainContract.Model, MainContrac
         this.mApplication = null;
     }
 
-    public void getData() {
-        if (mRootView instanceof FragmentActivity){
-            MainPagerAdapter adapter = new MainPagerAdapter(((FragmentActivity) mRootView).getSupportFragmentManager());
-            ArrayList<BaseFragment> mDatas = new ArrayList<>();
-            for (int i = 0; i < 4; i++) {
-                mDatas.add(TabOneFFragment.newInstance("item:"+i));
-            }
-            adapter.setmDatas(mDatas);
-            mRootView.setAdapter(adapter);
 
-        }
-    }
 }

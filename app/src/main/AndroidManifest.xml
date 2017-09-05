@@ -41,7 +41,10 @@
         <activity
             android:name=".mvp.ui.activity.MainActivity"
             android:label="@string/label_main" />
+        <activity
+            android:name=".mvp.ui.activity.TempActivity"
+            android:label="@string/title_activity_temp"
+            android:theme="@style/AppTheme"></activity>
     </application>
-
 
 </manifest>
