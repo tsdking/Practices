@@ -1,10 +1,9 @@
 package com.king.practices.mvp.model.api;
 
 /**
- * Created by admin on 2017/9/2.
+ * api
  */
-
 public interface Api {
-    String APP_DOMAIN = "https://api.github.com";
+    String APP_DOMAIN = "http://gank.io";
     String RequestSuccess = "0";
 }

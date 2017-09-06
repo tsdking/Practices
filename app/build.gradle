@@ -60,6 +60,7 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile rootProject.ext.dependencies["junit"]
     compile rootProject.ext.dependencies["appcompat-v7"]
+//    compile "cn.bmob.android:bmob-sdk:3.5.7"
     provided rootProject.ext.dependencies["javax.annotation"]
     compile rootProject.ext.dependencies["progressmanager"]
     compile rootProject.ext.dependencies["retrofit-url-manager"]

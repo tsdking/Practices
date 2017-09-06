@@ -211,6 +211,16 @@ public class GlobalConfiguration implements ConfigModule {
                 }
                 //leakCanary内存泄露检查
                 ArmsUtils.obtainAppComponentFromContext(application).extras().put(RefWatcher.class.getName(), BuildConfig.USE_CANARY ? LeakCanary.install(application) : RefWatcher.DISABLED);
+
+//                //Bmo后端云初始化
+//                Bmob.initialize(new BmobConfig.Builder(application)
+//                        .setApplicationId("4bbbd5fa74d1e52e6109ad78e9a40055")
+//                        .setConnectTimeout(30)
+//                        .setUploadBlockSize(1024 * 1024)
+//                        .setFileExpiration(2500)
+//                        .build());
+
+
             }
 
             @Override

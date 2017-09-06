@@ -24,6 +24,8 @@ allprojects {
             url 'https://dl.google.com/dl/android/maven2'
             // Alternative URL is 'https://dl.google.com/dl/android/maven2/'
         }
+        //Bmob的maven仓库地址--必填
+        maven { url "https://raw.github.com/bmob/bmob-android-sdk/master" }
     }
 }
 

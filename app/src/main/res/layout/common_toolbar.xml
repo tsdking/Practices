@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/toolbar"
+    android:layout_width="match_parent"
+    android:layout_height="56dp"
+    android:background="?attr/colorPrimary"
+    app:contentInsetStart="0dp">
+
+    <RelativeLayout
+        android:id="@+id/toolbar_back"
+        android:layout_width="56dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="left">
+
+        <ImageView
+            android:id="@+id/toolbar_ivback"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:src="@mipmap/ic_toolbar_left_menu" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/toolbar_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="干货"
+        android:textColor="#fff"
+        android:textSize="20sp"
+        tools:text="title" />
+
+    <RelativeLayout
+        android:id="@+id/toolbar_more"
+        android:layout_width="56dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="right">
+
+        <ImageView
+            android:id="@+id/toolbar_ivmore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:src="@mipmap/ic_toolbar_more" />
+    </RelativeLayout>
+
+
+</android.support.v7.widget.Toolbar>

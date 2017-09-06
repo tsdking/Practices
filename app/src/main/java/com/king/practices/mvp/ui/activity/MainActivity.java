@@ -53,7 +53,6 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
 
     @Override
     public void initData(Bundle savedInstanceState) {
-        //1.设置底部导航
         navView.enableShiftingMode(false);
         navView.enableAnimation(false);
         navView.enableItemShiftingMode(false);

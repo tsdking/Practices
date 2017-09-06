@@ -39,4 +39,8 @@ public class TabOneFPresenter extends BasePresenter<TabOneFContract.Model,TabOne
         this.mAppManager = null;
         this.mApplication = null;
     }
+
+    public void fetchData() {
+
+    }
 }

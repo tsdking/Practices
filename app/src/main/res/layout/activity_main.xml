@@ -18,6 +18,6 @@
         android:background="@color/white"
         app:itemIconTint="@color/selector_nav_item_color"
         app:itemTextColor="@color/selector_nav_item_color"
-        app:menu="@menu/menu_navigation_with_view_pager" />
+        app:menu="@menu/menu_for_bottom_navigation" />
 
 </LinearLayout>
