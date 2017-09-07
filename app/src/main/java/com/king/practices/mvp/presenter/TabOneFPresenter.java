@@ -6,10 +6,7 @@ import com.jess.arms.di.scope.ActivityScope;
 import com.jess.arms.integration.AppManager;
 import com.jess.arms.mvp.BasePresenter;
 import com.jess.arms.utils.ArmsUtils;
-import com.king.practices.app.utils.DBManager;
 import com.king.practices.mvp.contract.TabOneFContract;
-import com.king.practices.mvp.model.entity.BaseGank;
-import com.king.practices.mvp.model.entity.GankEveryDay;
 
 import javax.inject.Inject;
 
@@ -20,6 +17,7 @@ import io.reactivex.schedulers.Schedulers;
 import me.jessyan.rxerrorhandler.core.RxErrorHandler;
 import me.jessyan.rxerrorhandler.handler.ErrorHandleSubscriber;
 import me.jessyan.rxerrorhandler.handler.RetryWithDelay;
+import timber.log.Timber;
 
 /**
  * des:启动页
@@ -54,25 +52,16 @@ public class TabOneFPresenter extends BasePresenter<TabOneFContract.Model, TabOn
                 .subscribeOn(Schedulers.io())
                 .retryWhen(new RetryWithDelay(3, 2))//遇到错误时重试,第一个参数为重试几次,第二个参数为重试的间隔
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(new Consumer<BaseGank<GankEveryDay>>() {
+                .doOnNext(new Consumer<String>() {
                     @Override
-                    public void accept(BaseGank<GankEveryDay> gankEveryDayBaseGank) throws Exception {
-                        if (gankEveryDayBaseGank != null && gankEveryDayBaseGank.isSuccess()) {
-                            GankEveryDay results = gankEveryDayBaseGank.getResults();
-                            if (results != null) {
-                                DBManager.getGankDao().insertOrReplaceInTx(results.getAndroid());
-                                DBManager.getGankDao().insertOrReplaceInTx(results.getApp());
-                                DBManager.getGankDao().insertOrReplaceInTx(results.getVideo());
-                                DBManager.getGankDao().insertOrReplaceInTx(results.getWeb());
-                                DBManager.getGankDao().insertOrReplaceInTx(results.getFuli());
-                            }
-                        }
+                    public void accept(String s) throws Exception {
+                        Timber.tag("xqf").d("LasteDatas==="+s);
                     }
                 })
-                .subscribe(new ErrorHandleSubscriber<BaseGank<GankEveryDay>>(mErrorHandler) {
+                .subscribe(new ErrorHandleSubscriber<String>(mErrorHandler) {
                     @Override
-                    public void onNext(@NonNull BaseGank<GankEveryDay> gankEveryDayBaseGank) {
-                        ArmsUtils.snackbarText("wawawa");
+                    public void onNext(@NonNull String s) {
+                        ArmsUtils.snackbarText("wawa");
                     }
                 });
 

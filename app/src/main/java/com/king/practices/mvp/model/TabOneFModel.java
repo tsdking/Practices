@@ -7,8 +7,6 @@ import com.king.practices.app.utils.CommonUtil;
 import com.king.practices.app.utils.DBManager;
 import com.king.practices.mvp.contract.TabOneFContract;
 import com.king.practices.mvp.model.api.service.GankService;
-import com.king.practices.mvp.model.entity.BaseGank;
-import com.king.practices.mvp.model.entity.GankEveryDay;
 import com.king.practices.mvp.model.entity.GankHistoryDate;
 
 import java.util.List;
@@ -28,7 +26,7 @@ public class TabOneFModel extends BaseModel implements TabOneFContract.Model {
     }
 
     @Override
-    public Observable<BaseGank<GankEveryDay>> getLasteDatas() {
+    public Observable<String> getLasteDatas() {
         List<GankHistoryDate> list = DBManager.getGankHistoryDao().queryBuilder().limit(1).list();
         return mRepositoryManager.obtainRetrofitService(GankService.class)
                 .getEveryDayDatas(CommonUtil.converDateFormat(list.get(0).getMDate()));
