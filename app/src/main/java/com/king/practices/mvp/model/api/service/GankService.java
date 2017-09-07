@@ -2,6 +2,7 @@ package com.king.practices.mvp.model.api.service;
 
 import com.king.practices.mvp.model.entity.BaseGank;
 import com.king.practices.mvp.model.entity.Gank;
+import com.king.practices.mvp.model.entity.GankEveryDay;
 import com.king.practices.mvp.model.entity.GankTheDay;
 
 import java.util.List;
@@ -32,8 +33,8 @@ public interface GankService {
      * @param date 2017/06/01
      * @return
      */
-    @GET("/api/day/{date}")
-    Observable<String> getEveryDayDatas(@Path("date") String date);
+    @GET("/api/day/{year}/{month}/{day}")
+    Observable<BaseGank<GankEveryDay>> getEveryDayDatas(@Path("year") String date, @Path("month") String month, @Path("day") String day);
 
     /**
      * 获取分类数据

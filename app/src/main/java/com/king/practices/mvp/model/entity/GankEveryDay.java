@@ -9,7 +9,7 @@ import java.util.List;
  */
 public class GankEveryDay {
     private List<Gank> Android;
-    private List<Gank> App;
+    private List<Gank> iOS;
     private List<Gank> 休息视频;
     private List<Gank> 前端;
     private List<Gank> 福利;
@@ -22,12 +22,12 @@ public class GankEveryDay {
         Android = android;
     }
 
-    public List<Gank> getApp() {
-        return App;
+    public List<Gank> getiOS() {
+        return iOS;
     }
 
-    public void setApp(List<Gank> app) {
-        App = app;
+    public void setiOS(List<Gank> iOS) {
+        this.iOS = iOS;
     }
 
     public List<Gank> getVideo() {
