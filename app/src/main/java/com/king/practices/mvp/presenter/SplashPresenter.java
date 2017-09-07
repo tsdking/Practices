@@ -6,18 +6,24 @@ import android.content.Intent;
 import com.jess.arms.di.scope.ActivityScope;
 import com.jess.arms.integration.AppManager;
 import com.jess.arms.mvp.BasePresenter;
+import com.king.practices.app.utils.DBManager;
 import com.king.practices.mvp.contract.SplashContract;
+import com.king.practices.mvp.model.entity.BaseGank;
+import com.king.practices.mvp.model.entity.GankHistoryDate;
 import com.king.practices.mvp.ui.activity.MainActivity;
 import com.king.practices.mvp.ui.activity.SplashActivity;
 
-import java.util.concurrent.TimeUnit;
+import java.util.List;
 
 import javax.inject.Inject;
 
-import io.reactivex.Observable;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.Action;
+import io.reactivex.schedulers.Schedulers;
 import me.jessyan.rxerrorhandler.core.RxErrorHandler;
+import me.jessyan.rxerrorhandler.handler.ErrorHandleSubscriber;
+import me.jessyan.rxerrorhandler.handler.RetryWithDelay;
+import timber.log.Timber;
 
 /**
  * des:启动页
@@ -48,18 +54,48 @@ public class SplashPresenter extends BasePresenter<SplashContract.Model, SplashC
     }
 
     public void toMainPager() {
-        Disposable subscribe = Observable.timer(1, TimeUnit.SECONDS)
-                .subscribe(new Consumer<Long>() {
-                    @Override
-                    public void accept(Long aLong) throws Exception {
-                        mRootView.launchActivity(new Intent((SplashActivity) mRootView, MainActivity.class));
-                        mRootView.killMyself();
-                    }
-                });
-        addDispose(subscribe);
+        mRootView.launchActivity(new Intent((SplashActivity) mRootView, MainActivity.class));
+        mRootView.killMyself();
     }
 
     public void initData() {
-        mModel.getHistoryDate();
+        Timber.tag("xqf").d("db_net_begin:" + System.currentTimeMillis());
+        mModel.getHistoryDate()
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .retryWhen(new RetryWithDelay(3, 2))
+                .doFinally(new Action() {
+                    @Override
+                    public void run() throws Exception {
+                        toMainPager();
+                    }
+                })
+                .subscribe(new ErrorHandleSubscriber<BaseGank<List<String>>>(mErrorHandler) {
+                    @Override
+                    public void onNext(@NonNull BaseGank<List<String>> listBaseGank) {
+                        Timber.tag("xqf").d("db_net_end:" + System.currentTimeMillis());
+                        if (listBaseGank != null && listBaseGank.isSuccess() && listBaseGank.getResults() != null) {
+                            List<String> results = listBaseGank.getResults();
+                            GankHistoryDate historyDate;
+                            Timber.tag("xqf").d("db_insert_begin:" + System.currentTimeMillis());
+                            if (DBManager.getGankHistoryDao().count() == 0) {
+                                for (String res : results) {
+                                    historyDate = new GankHistoryDate();
+                                    historyDate.setMDate(res);
+                                    DBManager.getGankHistoryDao().insertOrReplace(historyDate);
+                                    Timber.tag("xqf").d("db_insert:" + res);
+                                }
+                            } else {
+                                for (int i = 0; i < 5; i++) {
+                                    historyDate = new GankHistoryDate();
+                                    historyDate.setMDate(results.get(i));
+                                    DBManager.getGankHistoryDao().insertOrReplace(historyDate);
+                                    Timber.tag("xqf").d("db_insert:" + results.get(i));
+                                }
+                            }
+                            Timber.tag("xqf").d("db_insert_end:" + System.currentTimeMillis());
+                        }
+                    }
+                });
     }
 }

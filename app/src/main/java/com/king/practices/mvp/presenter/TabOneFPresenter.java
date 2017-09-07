@@ -5,12 +5,21 @@ import android.app.Application;
 import com.jess.arms.di.scope.ActivityScope;
 import com.jess.arms.integration.AppManager;
 import com.jess.arms.mvp.BasePresenter;
-import com.king.practices.mvp.contract.MainContract;
+import com.jess.arms.utils.ArmsUtils;
+import com.king.practices.app.utils.DBManager;
 import com.king.practices.mvp.contract.TabOneFContract;
+import com.king.practices.mvp.model.entity.BaseGank;
+import com.king.practices.mvp.model.entity.GankEveryDay;
 
 import javax.inject.Inject;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 import me.jessyan.rxerrorhandler.core.RxErrorHandler;
+import me.jessyan.rxerrorhandler.handler.ErrorHandleSubscriber;
+import me.jessyan.rxerrorhandler.handler.RetryWithDelay;
 
 /**
  * des:启动页
@@ -18,7 +27,7 @@ import me.jessyan.rxerrorhandler.core.RxErrorHandler;
  * date:2017/9/3 18:49
  */
 @ActivityScope
-public class TabOneFPresenter extends BasePresenter<TabOneFContract.Model,TabOneFContract.View> {
+public class TabOneFPresenter extends BasePresenter<TabOneFContract.Model, TabOneFContract.View> {
     private RxErrorHandler mErrorHandler;
     private AppManager mAppManager;
     private Application mApplication;
@@ -41,6 +50,31 @@ public class TabOneFPresenter extends BasePresenter<TabOneFContract.Model,TabOne
     }
 
     public void fetchData() {
+        mModel.getLasteDatas()
+                .subscribeOn(Schedulers.io())
+                .retryWhen(new RetryWithDelay(3, 2))//遇到错误时重试,第一个参数为重试几次,第二个参数为重试的间隔
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext(new Consumer<BaseGank<GankEveryDay>>() {
+                    @Override
+                    public void accept(BaseGank<GankEveryDay> gankEveryDayBaseGank) throws Exception {
+                        if (gankEveryDayBaseGank != null && gankEveryDayBaseGank.isSuccess()) {
+                            GankEveryDay results = gankEveryDayBaseGank.getResults();
+                            if (results != null) {
+                                DBManager.getGankDao().insertOrReplaceInTx(results.getAndroid());
+                                DBManager.getGankDao().insertOrReplaceInTx(results.getApp());
+                                DBManager.getGankDao().insertOrReplaceInTx(results.getVideo());
+                                DBManager.getGankDao().insertOrReplaceInTx(results.getWeb());
+                                DBManager.getGankDao().insertOrReplaceInTx(results.getFuli());
+                            }
+                        }
+                    }
+                })
+                .subscribe(new ErrorHandleSubscriber<BaseGank<GankEveryDay>>(mErrorHandler) {
+                    @Override
+                    public void onNext(@NonNull BaseGank<GankEveryDay> gankEveryDayBaseGank) {
+                        ArmsUtils.snackbarText("wawawa");
+                    }
+                });
 
     }
 }

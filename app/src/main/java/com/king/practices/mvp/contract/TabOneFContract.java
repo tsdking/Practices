@@ -2,7 +2,10 @@ package com.king.practices.mvp.contract;
 
 import com.jess.arms.mvp.IModel;
 import com.jess.arms.mvp.IView;
-import com.tbruyelle.rxpermissions2.RxPermissions;
+import com.king.practices.mvp.model.entity.BaseGank;
+import com.king.practices.mvp.model.entity.GankEveryDay;
+
+import io.reactivex.Observable;
 
 /**
  * des:
@@ -16,6 +19,6 @@ public interface TabOneFContract {
     }
 
     interface Model extends IModel {
-
+        Observable<BaseGank<GankEveryDay>> getLasteDatas();
     }
 }
