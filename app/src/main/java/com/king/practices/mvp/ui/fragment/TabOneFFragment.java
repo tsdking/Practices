@@ -85,6 +85,7 @@ public class TabOneFFragment extends BaseFragment<TabOneFPresenter> implements T
         navigationView.setNavigationItemSelectedListener(this);
         ArmsUtils.configRecycleView(recyclerView, new LinearLayoutManager(getActivity()));
         mPresenter.fetchData();
+
     }
 
     @Override

@@ -15,6 +15,6 @@ public interface SplashContract {
     }
 
     interface Model extends IModel {
-
+        void getHistoryDate();
     }
 }

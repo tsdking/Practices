@@ -58,4 +58,8 @@ public class SplashPresenter extends BasePresenter<SplashContract.Model, SplashC
                 });
         addDispose(subscribe);
     }
+
+    public void initData() {
+        mModel.getHistoryDate();
+    }
 }

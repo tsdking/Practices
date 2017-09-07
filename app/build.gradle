@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-
+apply plugin: 'org.greenrobot.greendao'
 android {
     compileSdkVersion rootProject.ext.android["compileSdkVersion"]
     buildToolsVersion rootProject.ext.android["buildToolsVersion"]
@@ -29,24 +29,35 @@ android {
         }
     }
 
-    tasks.whenTaskAdded { task ->
-        if (task.name.contains("lint")
-//如果instant run不生效，把clean这行干掉
-                || task.name.equals("clean")
-                //如果项目中有用到aidl则不可以舍弃这个任务
-                || task.name.contains("Aidl")
-//用不到测试的时候就可以先关闭
-                || task.name.contains("mockableAndroidJar")
-                || task.name.contains("UnitTest")
-                || task.name.contains("AndroidTest")
-//用不到NDK和JNI的也关闭掉
-                || task.name.contains("Ndk")
-                || task.name.contains("Jni")
-        ) {
-            task.enabled = false
+//    tasks.whenTaskAdded { task ->
+//        if (task.name.contains("lint")
+////如果instant run不生效，把clean这行干掉
+//                || task.name.equals("clean")
+//                //如果项目中有用到aidl则不可以舍弃这个任务
+//                || task.name.contains("Aidl")
+////用不到测试的时候就可以先关闭
+//                || task.name.contains("mockableAndroidJar")
+//                || task.name.contains("UnitTest")
+//                || task.name.contains("AndroidTest")
+////用不到NDK和JNI的也关闭掉
+//                || task.name.contains("Ndk")
+//                || task.name.contains("Jni")
+//        ) {
+//            task.enabled = false
+//        }
+//    }
+
+    sourceSets {
+        main {
+            java.srcDirs = ['src/main/java', 'src/main/java-gen']// //添加创建java-gen目录
         }
     }
-
+    // 配置GreenDao基本参数
+    greendao {
+        schemaVersion 1 //当前数据库版本
+        targetGenDir 'src/main/java-gen' //greendao生成的文件所在目录
+        daoPackage 'com.king.practices.greendao' //greendao生成的文件所在目录包名
+    }
 
 }
 
@@ -55,6 +66,8 @@ buildscript {
         jcenter()
     }
 }
+
+
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
@@ -73,6 +86,7 @@ dependencies {
     compile rootProject.ext.dependencies["brvah"]
     compile rootProject.ext.dependencies["smartrefresh"]
     compile 'me.jessyan:arms:2.2.0'
+    compile 'org.greenrobot:greendao:3.1.1'
     debugCompile rootProject.ext.dependencies["canary-debug"]
     releaseCompile rootProject.ext.dependencies["canary-release"]
     testCompile rootProject.ext.dependencies["canary-release"]

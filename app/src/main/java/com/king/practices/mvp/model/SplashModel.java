@@ -16,4 +16,9 @@ public class SplashModel extends BaseModel implements SplashContract.Model {
     public SplashModel(IRepositoryManager repositoryManager) {
         super(repositoryManager);
     }
+
+    @Override
+    public void getHistoryDate() {
+
+    }
 }
