@@ -19,10 +19,19 @@ import com.jess.arms.base.BaseFragment;
 import com.jess.arms.di.component.AppComponent;
 import com.jess.arms.utils.ArmsUtils;
 import com.king.practices.R;
+import com.king.practices.app.Constants;
 import com.king.practices.di.component.DaggerTabOneFComponent;
 import com.king.practices.di.module.TabOneFModule;
 import com.king.practices.mvp.contract.TabOneFContract;
+import com.king.practices.mvp.model.entity.Gank;
 import com.king.practices.mvp.presenter.TabOneFPresenter;
+import com.king.practices.mvp.ui.adapter.GankAdapter;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnLoadmoreListener;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -52,12 +61,14 @@ public class TabOneFFragment extends BaseFragment<TabOneFPresenter> implements T
     NavigationView navigationView;
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
+    @BindView(R.id.refresh_layout)
+    SmartRefreshLayout refreshLayout;
+    private GankAdapter adapter;
 
 
     public static TabOneFFragment newInstance(String index) {
         TabOneFFragment fragment = new TabOneFFragment();
         Bundle args = new Bundle();
-        // TODO: 2017/9/4 外部可以传递参数
         args.putString("keyOne", index);
         fragment.setArguments(args);
         return fragment;
@@ -79,14 +90,23 @@ public class TabOneFFragment extends BaseFragment<TabOneFPresenter> implements T
 
     @Override
     public void initData(Bundle savedInstanceState) {
-        Bundle bundle = getArguments();
-        //获取newInstance 传入的初始化参数
-        //---------------------------------------
         navigationView.setNavigationItemSelectedListener(this);
         ArmsUtils.configRecycleView(recyclerView, new LinearLayoutManager(getActivity()));
-        mPresenter.fetchData();
-
+        refreshLayout.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshlayout) {
+                refreshlayout.finishRefresh(2000);
+            }
+        });
+        refreshLayout.setOnLoadmoreListener(new OnLoadmoreListener() {
+            @Override
+            public void onLoadmore(RefreshLayout refreshlayout) {
+                refreshlayout.finishLoadmore(2000);
+            }
+        });
+        mPresenter.fetchData(Constants.RequestType.LASTED, false);
     }
+
 
     @Override
     public void setData(Object data) {
@@ -105,12 +125,10 @@ public class TabOneFFragment extends BaseFragment<TabOneFPresenter> implements T
 
     @Override
     public void showMessage(String message) {
-
     }
 
     @Override
     public void launchActivity(Intent intent) {
-
     }
 
     @Override
@@ -138,15 +156,45 @@ public class TabOneFFragment extends BaseFragment<TabOneFPresenter> implements T
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
+        drawerLayout.closeDrawer(GravityCompat.START);
         int id = item.getItemId();
         if (id == R.id.nav_latest) {
             //最新
+            mPresenter.fetchData(Constants.RequestType.LASTED, false);
         } else if (id == R.id.nav_random) {
             //随机推荐
-        } else if (id == R.id.nav_category) {
-            //分类
+            mPresenter.fetchData(Constants.RequestType.RANDMOD, false);
+        } else if (id == R.id.nav_android) {
+            //android
+            mPresenter.fetchData(Constants.RequestType.ANDROID, false);
+        } else if (id == R.id.nav_ios) {
+            //ios
+            mPresenter.fetchData(Constants.RequestType.IOS, false);
+        } else if (id == R.id.nav_web) {
+            //前端
+            mPresenter.fetchData(Constants.RequestType.WEB, false);
+        } else if (id == R.id.nav_video) {
+            //视频
+            mPresenter.fetchData(Constants.RequestType.VIDEO, false);
+        } else if (id == R.id.nav_fuli) {
+            //福利
+            mPresenter.fetchData(Constants.RequestType.FULI, false);
         }
-        drawerLayout.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void updataList(List<Gank> datas, boolean isLoadMore) {
+        if (adapter == null) {
+            adapter = new GankAdapter(datas);
+            recyclerView.setAdapter(adapter);
+        } else {
+            if (isLoadMore) {
+                adapter.addData(datas);
+            } else {
+                adapter.setNewData(datas);
+            }
+        }
+
     }
 }

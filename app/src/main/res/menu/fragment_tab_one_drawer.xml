@@ -12,9 +12,26 @@
             android:icon="@drawable/ic_menu_gallery"
             android:title="随机" />
         <item
-            android:id="@+id/nav_category"
+            android:id="@+id/nav_android"
             android:icon="@drawable/ic_menu_slideshow"
-            android:title="分类" />
+            android:title="安卓" />
+        <item
+            android:id="@+id/nav_ios"
+            android:icon="@drawable/ic_menu_slideshow"
+            android:title="苹果" />
+        <item
+            android:id="@+id/nav_web"
+            android:icon="@drawable/ic_menu_slideshow"
+            android:title="前端" />
+        <item
+            android:id="@+id/nav_video"
+            android:icon="@drawable/ic_menu_slideshow"
+            android:title="视频" />
+        <item
+            android:id="@+id/nav_fuli"
+            android:icon="@drawable/ic_menu_slideshow"
+            android:title="福利" />
+
     </group>
 
     <item android:title="其他">

@@ -13,6 +13,15 @@ public class GankEveryDay {
     private List<Gank> 休息视频;
     private List<Gank> 前端;
     private List<Gank> 福利;
+    private List<Gank> 拓展资源;
+
+    public List<Gank> getExtend() {
+        return 拓展资源;
+    }
+
+    public void setExtend(List<Gank> extend) {
+        this.拓展资源 = extend;
+    }
 
     public List<Gank> getAndroid() {
         return Android;
