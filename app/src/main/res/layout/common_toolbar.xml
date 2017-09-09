@@ -47,7 +47,7 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
-            android:src="@mipmap/ic_toolbar_more" />
+            android:src="@mipmap/ic_toolbar_random" />
     </RelativeLayout>
 
 

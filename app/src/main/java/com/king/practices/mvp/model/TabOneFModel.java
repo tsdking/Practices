@@ -35,7 +35,8 @@ public class TabOneFModel extends BaseModel implements TabOneFContract.Model {
         if (mRequestype == Constants.RequestType.LASTED) {
             list = DBManager.getGankHistoryDao().queryBuilder().limit(1).list();
         }else if (mRequestype == Constants.RequestType.RANDMOD){
-            list = DBManager.getGankHistoryDao().queryBuilder().offset(new Random().nextInt(20)).limit(1).list();
+            long count = DBManager.getGankHistoryDao().queryBuilder().count()-1;
+            list = DBManager.getGankHistoryDao().queryBuilder().offset(new Random().nextInt((int) count)).limit(1).list();
         }
         if (list==null || list.size()==0){
             throw  new IllegalArgumentException("未查询到任何特定日期");

@@ -95,16 +95,18 @@ public class TabOneFFragment extends BaseFragment<TabOneFPresenter> implements T
         refreshLayout.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(RefreshLayout refreshlayout) {
+                mPresenter.fetchData(false);
                 refreshlayout.finishRefresh(2000);
             }
         });
         refreshLayout.setOnLoadmoreListener(new OnLoadmoreListener() {
             @Override
             public void onLoadmore(RefreshLayout refreshlayout) {
+                mPresenter.fetchData(true);
                 refreshlayout.finishLoadmore(2000);
             }
         });
-        mPresenter.fetchData(Constants.RequestType.LASTED, false);
+        mPresenter.fetchData(false);
     }
 
 
@@ -148,7 +150,10 @@ public class TabOneFFragment extends BaseFragment<TabOneFPresenter> implements T
                 }
                 break;
             case R.id.toolbar_more:
-                ArmsUtils.snackbarText("分类");
+                //随机
+                toolbarTitle.setText("随机推荐");
+                mPresenter.fetchData(Constants.RequestType.RANDMOD, false);
+                navigationView.setCheckedItem(R.id.nav_latest);
                 break;
         }
     }
@@ -158,34 +163,30 @@ public class TabOneFFragment extends BaseFragment<TabOneFPresenter> implements T
     public boolean onNavigationItemSelected(MenuItem item) {
         drawerLayout.closeDrawer(GravityCompat.START);
         int id = item.getItemId();
-        String title="干货";
+        String title = "干货";
         if (id == R.id.nav_latest) {
             //最新
-            title="最新";
+            title = "最新推荐";
             mPresenter.fetchData(Constants.RequestType.LASTED, false);
-        } else if (id == R.id.nav_random) {
-            //随机推荐
-            title="随机推荐";
-            mPresenter.fetchData(Constants.RequestType.RANDMOD, false);
         } else if (id == R.id.nav_android) {
             //android
-            title="Android";
+            title = "Android";
             mPresenter.fetchData(Constants.RequestType.ANDROID, false);
         } else if (id == R.id.nav_ios) {
             //ios
-            title="IOS";
+            title = "IOS";
             mPresenter.fetchData(Constants.RequestType.IOS, false);
         } else if (id == R.id.nav_web) {
             //前端
-            title="前端";
+            title = "前端";
             mPresenter.fetchData(Constants.RequestType.WEB, false);
         } else if (id == R.id.nav_video) {
             //视频
-            title="视频";
+            title = "视频";
             mPresenter.fetchData(Constants.RequestType.VIDEO, false);
         } else if (id == R.id.nav_fuli) {
             //福利
-            title="福利";
+            title = "福利";
             mPresenter.fetchData(Constants.RequestType.FULI, false);
         }
         toolbarTitle.setText(title);
@@ -204,6 +205,5 @@ public class TabOneFFragment extends BaseFragment<TabOneFPresenter> implements T
                 adapter.setNewData(datas);
             }
         }
-
     }
 }
