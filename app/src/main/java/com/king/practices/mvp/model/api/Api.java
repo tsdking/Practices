@@ -8,5 +8,5 @@ public interface Api {
     /**
      * 默认每页请求的数据条数
      */
-    int PAGE_SIZE = 10;
+    int PAGE_SIZE = 20;
 }

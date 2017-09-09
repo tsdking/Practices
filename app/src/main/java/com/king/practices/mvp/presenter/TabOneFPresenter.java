@@ -38,8 +38,10 @@ public class TabOneFPresenter extends BasePresenter<TabOneFContract.Model, TabOn
     private int offset = 0;
     @Constants.RequestType
     private int mRequestype = Constants.RequestType.LASTED;
-    private boolean loadType;
+    @Constants.LoadType
+    private int mLoadType;
     private List<Gank> datas;
+    private int pageIndex = 1;//第几页
 
     @Inject
     public TabOneFPresenter(TabOneFContract.Model model, TabOneFContract.View rootView, RxErrorHandler handler
@@ -51,8 +53,8 @@ public class TabOneFPresenter extends BasePresenter<TabOneFContract.Model, TabOn
     }
 
 
-    public void fetchData(boolean isLoadMore) {
-        fetchData(mRequestype, isLoadMore);
+    public void fetchData(@Constants.LoadType int loadType) {
+        fetchData(mRequestype, loadType);
     }
 
     @Constants.RequestType
@@ -60,10 +62,11 @@ public class TabOneFPresenter extends BasePresenter<TabOneFContract.Model, TabOn
         return mRequestype;
     }
 
-    public void fetchData(@Constants.RequestType int requestype, final boolean isLoadMore) {
-        loadType = isLoadMore;
+    public void fetchData(@Constants.RequestType int requestype, @Constants.LoadType int loadType) {
+        mLoadType = loadType;
         mRequestype = requestype;
         if (mRequestype == Constants.RequestType.LASTED || mRequestype == Constants.RequestType.RANDMOD) {
+            //大杂烩
             mModel.getLasteDatas(mRequestype)
                     .subscribeOn(Schedulers.io())
                     .retryWhen(new RetryWithDelay(3, 2))//遇到错误时重试,第一个参数为重试几次,第二个参数为重试的间隔
@@ -78,6 +81,7 @@ public class TabOneFPresenter extends BasePresenter<TabOneFContract.Model, TabOn
                                 saveGank(results.getVideo());
                                 saveGank(results.getFuli());
                                 saveGank(results.getiOS());
+                                saveGank(results.getExtend());
                             }
                         }
                     })
@@ -86,14 +90,12 @@ public class TabOneFPresenter extends BasePresenter<TabOneFContract.Model, TabOn
                         public void onNext(@NonNull BaseGank<GankEveryDay> ganks) {
                             if (datas == null) {
                                 datas = new ArrayList<Gank>();
-                            } else {
+                            }else{
                                 datas.clear();
                             }
-
-                            if (isLoadMore) {
-                                //加载更多
-                                datas = DBManager.getGankDao().queryBuilder().offset(offset+=10).limit(10).list();
-//                                offset+=10;
+                            if (mLoadType ==Constants.LoadType.MORE) {
+                                //加载更多 .offset(offset+=20)
+                                datas=(DBManager.getGankDao().queryBuilder().offset(offset+=20).limit(10).list());
                             } else {
                                 //刷新
                                 offset = 0;
@@ -113,8 +115,40 @@ public class TabOneFPresenter extends BasePresenter<TabOneFContract.Model, TabOn
                                 if (results.getVideo() != null) {
                                     datas.addAll(results.getVideo());
                                 }
+                                if (results.getExtend() != null) {
+                                    datas.addAll(results.getExtend());
+                                }
                             }
-                            mRootView.updataList(datas, loadType);
+                            mRootView.updataList(datas, mLoadType);
+                        }
+                    });
+        }
+
+        if (mRequestype == Constants.RequestType.ANDROID
+                ||mRequestype == Constants.RequestType.IOS
+                ||mRequestype == Constants.RequestType.WEB
+                ||mRequestype == Constants.RequestType.VIDEO
+                ||mRequestype == Constants.RequestType.FULI
+                ||mRequestype == Constants.RequestType.EXTEND
+                ){
+            //分类资源
+            pageIndex=(mLoadType== Constants.LoadType.Refresh)?1:pageIndex+1;
+            mModel.getCateoryData(mRequestype,pageIndex)
+                    .subscribeOn(Schedulers.io())
+                    .retryWhen(new RetryWithDelay(3, 2))//遇到错误时重试,第一个参数为重试几次,第二个参数为重试的间隔
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .doOnNext(new Consumer<BaseGank<List<Gank>>>() {
+                        @Override
+                        public void accept(BaseGank<List<Gank>> listBaseGank) throws Exception {
+                            if (listBaseGank != null && listBaseGank.getResults()!=null && listBaseGank.getResults().size()>0) {
+                                saveGank(listBaseGank.getResults());
+                            }
+                        }
+                    })
+                    .subscribe(new ErrorHandleSubscriber<BaseGank<List<Gank>>>(mErrorHandler) {
+                        @Override
+                        public void onNext(@NonNull BaseGank<List<Gank>> listBaseGank) {
+                            mRootView.updataList(listBaseGank.getResults(), mLoadType);
                         }
                     });
         }

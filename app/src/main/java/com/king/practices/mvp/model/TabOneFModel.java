@@ -6,8 +6,11 @@ import com.jess.arms.mvp.BaseModel;
 import com.king.practices.app.Constants;
 import com.king.practices.app.utils.DBManager;
 import com.king.practices.mvp.contract.TabOneFContract;
+import com.king.practices.mvp.model.api.Api;
+import com.king.practices.mvp.model.api.service.Cateory;
 import com.king.practices.mvp.model.api.service.GankService;
 import com.king.practices.mvp.model.entity.BaseGank;
+import com.king.practices.mvp.model.entity.Gank;
 import com.king.practices.mvp.model.entity.GankEveryDay;
 import com.king.practices.mvp.model.entity.GankHistoryDate;
 
@@ -45,5 +48,32 @@ public class TabOneFModel extends BaseModel implements TabOneFContract.Model {
         String[] split = date.split("-");
         return mRepositoryManager.obtainRetrofitService(GankService.class)
                 .getEveryDayDatas(split[0], split[1], split[2]);
+    }
+
+    @Override
+    public Observable<BaseGank<List<Gank>>> getCateoryData(@Constants.RequestType int mRequestype, int pageIndex) {
+        String cateory = Cateory.ALL.getType();
+        switch (mRequestype) {
+            case Constants.RequestType.ANDROID:
+                cateory = Cateory.ANDROID.getType();
+                break;
+            case Constants.RequestType.EXTEND:
+                cateory = Cateory.EXTEND.getType();
+                break;
+            case Constants.RequestType.FULI:
+                cateory = Cateory.FULI.getType();
+                break;
+            case Constants.RequestType.IOS:
+                cateory = Cateory.IOS.getType();
+                break;
+            case Constants.RequestType.VIDEO:
+                cateory = Cateory.VIDEO.getType();
+                break;
+            case Constants.RequestType.WEB:
+                cateory = Cateory.WEB.getType();
+                break;
+        }
+        return mRepositoryManager.obtainRetrofitService(GankService.class)
+                .getCategoryDatas(cateory, Api.PAGE_SIZE, pageIndex);
     }
 }

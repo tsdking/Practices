@@ -20,13 +20,14 @@ public interface TabOneFContract {
 
     interface View extends IView {
 
+        void scrollToTop();
         /**
          * 更新列表数据
          *
-         * @param datas      gank
-         * @param isLoadMore true 加载更多;false刷新
+         * @param datas    gank
+         * @param loadType
          */
-        void updataList(List<Gank> datas, boolean isLoadMore);
+        void updataList(List<Gank> datas, @Constants.LoadType int loadType);
     }
 
     interface Model extends IModel {
@@ -36,5 +37,12 @@ public interface TabOneFContract {
          * @return
          */
         Observable<BaseGank<GankEveryDay>> getLasteDatas(@Constants.RequestType int mRequestype);
+
+        /**
+         * 获取分类数据
+         *
+         * @return
+         */
+        Observable<BaseGank<List<Gank>>> getCateoryData(@Constants.RequestType int mRequestype,int pageIndex);
     }
 }
