@@ -6,37 +6,52 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.View;
 import android.webkit.DownloadListener;
-import android.webkit.WebChromeClient;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.jess.arms.base.BaseActivity;
 import com.jess.arms.di.component.AppComponent;
-import com.jess.arms.http.imageloader.glide.ImageConfigImpl;
 import com.jess.arms.utils.ArmsUtils;
 import com.king.practices.R;
+import com.king.practices.app.utils.DBManager;
 import com.king.practices.di.component.DaggerGankDetailComponent;
 import com.king.practices.di.module.GankDetailModule;
 import com.king.practices.mvp.contract.GankDetailContract;
+import com.king.practices.mvp.model.entity.Gank;
 import com.king.practices.mvp.presenter.GankDetailPresenter;
+import com.king.practices.mvp.ui.adapter.SwipeCardAdapter;
 import com.tbruyelle.rxpermissions2.RxPermissions;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import me.yuqirong.cardswipelayout.CardConfig;
+import me.yuqirong.cardswipelayout.CardItemTouchHelperCallback;
+import me.yuqirong.cardswipelayout.CardLayoutManager;
+import me.yuqirong.cardswipelayout.OnSwipeListener;
 
 public class GankDetailActivity extends BaseActivity<GankDetailPresenter> implements GankDetailContract.View {
     private RxPermissions mRxPermissions;
 
-    @BindView(R.id.rl_gank_fuli)
-    RelativeLayout rlGankFuli;
-    @BindView(R.id.iv_fuli)
-    ImageView ivFuli;//福利图
+    @BindView(R.id.ll_gank_fuli)
+    LinearLayout llGankFuli;
+    @BindView(R.id.iv_left)
+    ImageView ivLeft;//左边的按钮
+    @BindView(R.id.iv_right)
+    ImageView ivRight;//右边的按钮
 
     @BindView(R.id.coordinatorLayout)
     CoordinatorLayout coordinator;//webView根视图
@@ -46,8 +61,13 @@ public class GankDetailActivity extends BaseActivity<GankDetailPresenter> implem
     TextView tvTitle;//标题
     @BindView(R.id.toolbar_ivmore)
     ImageView ivMark;//收藏
-    @BindView(R.id.webview)
-    WebView webvew;//webView
+//    @BindView(R.id.webview)
+    WebView webView;//webView
+    @BindView(R.id.recyclerView)
+    RecyclerView recyclerView;
+    @BindView(R.id.container)
+    FrameLayout container;
+    private SwipeCardAdapter adapter;
 
 
     @Override
@@ -75,31 +95,69 @@ public class GankDetailActivity extends BaseActivity<GankDetailPresenter> implem
         return mRxPermissions;
     }
 
+
     @Override
     public void updataView(int viewType, String url) {
         if (viewType == 0) {
-            rlGankFuli.setVisibility(View.VISIBLE);
-            mPresenter.getImageLoader().
-                    loadImage(this,
-                            ImageConfigImpl
-                                    .builder()
-                                    .imageView(ivFuli)
-                                    .url(url)
-                                    .cacheStrategy(0)
-                                    .build()
-                    );
+            llGankFuli.setVisibility(View.VISIBLE);
+            updataFuli();
         } else {
             coordinator.setVisibility(View.VISIBLE);
-//            loadData(url);
-            webvew.loadUrl(url);
             tvTitle.setVisibility(View.GONE);
             ivBack.setImageResource(R.mipmap.ic_arrow_back_white_24dp);
             ivMark.setImageResource(R.drawable.ic_menu_camera);
+            loadData(url);
         }
     }
 
+    private void updataFuli() {
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        List<Gank> fuliData = mPresenter.getFuliData();
+        if (adapter == null) {
+            adapter = new SwipeCardAdapter(R.layout.item_for_swipe_card, fuliData);
+            recyclerView.setAdapter(adapter);
+        } else {
+            adapter.setNewData(fuliData);
+        }
+
+        CardItemTouchHelperCallback cardCallback = new CardItemTouchHelperCallback(recyclerView.getAdapter(), fuliData);
+        cardCallback.setOnSwipedListener(new OnSwipeListener() {
+            @Override
+            public void onSwiping(RecyclerView.ViewHolder viewHolder, float ratio, int direction) {
+
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, Object o, int direction) {
+                if (o instanceof Gank) {
+                    Gank gank = (Gank) o;
+                    if (direction == CardConfig.SWIPED_LEFT) {
+                        //左滑 移除并 加入收藏
+                        gank.setCollect(1);
+                    } else {
+                        //右滑 移除 取消收藏
+                        gank.setCollect(0);
+                    }
+                    DBManager.getGankDao().insertOrReplace(gank);
+                }
+                Log.d(TAG, "onSwiped: " + o.toString());
+            }
+
+            @Override
+            public void onSwipedClear() {
+                Log.d(TAG, "onSwipedClear: ");
+            }
+        });
+        final ItemTouchHelper touchHelper = new ItemTouchHelper(cardCallback);
+        final CardLayoutManager cardLayoutManager = new CardLayoutManager(recyclerView, touchHelper);
+        recyclerView.setLayoutManager(cardLayoutManager);
+        touchHelper.attachToRecyclerView(recyclerView);
+    }
+
     private void loadData(String url) {
-        WebSettings webSettings = webvew.getSettings();
+        webView = new WebView(getApplicationContext());
+        container.addView(webView);
+        WebSettings webSettings = webView.getSettings();
         if (Build.VERSION.SDK_INT >= 19) {
             webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);//加载缓存否则网络
         }
@@ -110,27 +168,13 @@ public class GankDetailActivity extends BaseActivity<GankDetailPresenter> implem
             webSettings.setLoadsImagesAutomatically(false);//图片自动缩放 关闭
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            webvew.setLayerType(View.LAYER_TYPE_SOFTWARE, null);//软件解码
-        }
-        webvew.setLayerType(View.LAYER_TYPE_HARDWARE, null);//硬件解码
+        webView.setLayerType(View.LAYER_TYPE_HARDWARE, null);//硬件解码
 
-//        webSettings.setAllowContentAccess(true);
-//        webSettings.setAllowFileAccessFromFileURLs(true);
-//        webSettings.setAppCacheEnabled(true);
-   /*     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            webSettings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
-        }*/
+        webSettings.setJavaScriptEnabled(true); // 设置支持javascript脚本]
+        webSettings.setSupportZoom(false);// 设置可以支持缩放
+        webSettings.setBuiltInZoomControls(false);// 设置出现缩放工具 是否使用WebView内置的缩放组件，由浮动在窗口上的缩放控制和手势缩放控制组成，默认false
 
-
-        // setMediaPlaybackRequiresUserGesture(boolean require) //是否需要用户手势来播放Media，默认true
-
-        webSettings.setJavaScriptEnabled(true); // 设置支持javascript脚本
-//        webSettings.setPluginState(WebSettings.PluginState.ON);
-        webSettings.setSupportZoom(true);// 设置可以支持缩放
-        webSettings.setBuiltInZoomControls(true);// 设置出现缩放工具 是否使用WebView内置的缩放组件，由浮动在窗口上的缩放控制和手势缩放控制组成，默认false
-
-        webSettings.setDisplayZoomControls(false);//隐藏缩放工具
+        webSettings.setDisplayZoomControls(true);//隐藏缩放工具
         webSettings.setUseWideViewPort(true);// 扩大比例的缩放
 
         webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);//自适应屏幕
@@ -138,30 +182,15 @@ public class GankDetailActivity extends BaseActivity<GankDetailPresenter> implem
 
         webSettings.setDatabaseEnabled(true);//
         webSettings.setSavePassword(true);//保存密码
-        webSettings.setDomStorageEnabled(true);//是否开启本地DOM存储  鉴于它的安全特性（任何人都能读取到它，尽管有相应的限制，将敏感数据存储在这里依然不是明智之举），Android 默认是关闭该功能的。
-        webvew.setSaveEnabled(true);
-        webvew.setKeepScreenOn(true);
-        // 设置setWebChromeClient对象
-        webvew.setWebChromeClient(new WebChromeClient() {
-            @Override
-            public void onReceivedTitle(WebView view, String title) {
-                super.onReceivedTitle(view, title);
-            }
+        webSettings.setDomStorageEnabled(false);//是否开启本地DOM存储  鉴于它的安全特性（任何人都能读取到它，尽管有相应的限制，将敏感数据存储在这里依然不是明智之举），Android 默认是关闭该功能的。
+        webView.setSaveEnabled(true);
+        webView.setKeepScreenOn(true);
 
-            @Override
-            public void onProgressChanged(WebView view, int newProgress) {
-                // TODO Auto-generated method stub
-                super.onProgressChanged(view, newProgress);
-            }
-        });
         //设置此方法可在WebView中打开链接，反之用浏览器打开
-        webvew.setWebViewClient(new WebViewClient() {
+        webView.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
-                if (!webvew.getSettings().getLoadsImagesAutomatically()) {
-                    webvew.getSettings().setLoadsImagesAutomatically(true);
-                }
             }
 
             @Override
@@ -170,37 +199,35 @@ public class GankDetailActivity extends BaseActivity<GankDetailPresenter> implem
             }
 
             @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-
-                if (url.startsWith("http:") || url.startsWith("https:")) {
-                    view.loadUrl(url);
-                    return false;
-                }
-
-                // Otherwise allow the OS to handle things like tel, mailto, etc.
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                startActivity(intent);
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 return true;
             }
         });
-        webvew.setDownloadListener(new DownloadListener() {
+
+        webView.setDownloadListener(new DownloadListener() {
             public void onDownloadStart(String paramAnonymousString1, String paramAnonymousString2, String paramAnonymousString3, String paramAnonymousString4, long paramAnonymousLong) {
                 Intent intent = new Intent();
                 intent.setAction("android.intent.action.VIEW");
                 intent.setData(Uri.parse(paramAnonymousString1));
-                startActivity(intent);
+                launchActivity(intent);
                 killMyself();
             }
         });
-        webvew.loadUrl(url);
+        webView.loadUrl(url);
     }
 
-    @OnClick({R.id.toolbar_more})
+    @OnClick({R.id.toolbar_more, R.id.iv_left, R.id.iv_right})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.toolbar_more:
                 //收藏
                 ArmsUtils.snackbarText("收藏");
+                break;
+            case R.id.iv_left:
+                ArmsUtils.snackbarText("iv_left");
+                break;
+            case R.id.iv_right:
+                ArmsUtils.snackbarText("iv_right");
                 break;
         }
     }
@@ -222,16 +249,18 @@ public class GankDetailActivity extends BaseActivity<GankDetailPresenter> implem
 
     @Override
     public void launchActivity(Intent intent) {
-
+        ArmsUtils.startActivity(intent);
     }
 
 
     @Override
     public void killMyself() {
-        if (webvew != null) {
-            webvew.destroy();
+        if (webView != null) {
+            webView.destroy();
         }
-        mPresenter.getImageLoader().clear(this, ImageConfigImpl.builder().imageView(ivFuli).build());
+        container.removeAllViews();
         finish();
     }
+
+
 }

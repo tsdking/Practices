@@ -40,13 +40,14 @@ public class Gank implements MultiItemEntity {
     private boolean used;
     private String who;//作者
     private String image;//文章配图
+    private int  collect;//收藏状态 1 已收藏,其他值未收藏
     @Transient
     private List<String> images;//文章配图
 
-    @Generated(hash = 2063140998)
+    @Generated(hash = 1975306585)
     public Gank(String _id, String createdAt, String desc, String publishedAt,
-                String source, String type, String url, boolean used, String who,
-                String image) {
+            String source, String type, String url, boolean used, String who,
+            String image, int collect) {
         this._id = _id;
         this.createdAt = createdAt;
         this.desc = desc;
@@ -57,6 +58,7 @@ public class Gank implements MultiItemEntity {
         this.used = used;
         this.who = who;
         this.image = image;
+        this.collect = collect;
     }
 
     @Generated(hash = 116302247)
@@ -168,6 +170,14 @@ public class Gank implements MultiItemEntity {
             result = 5;
         }
         return result;
+    }
+
+    public int getCollect() {
+        return this.collect;
+    }
+
+    public void setCollect(int collect) {
+        this.collect = collect;
     }
 }
 

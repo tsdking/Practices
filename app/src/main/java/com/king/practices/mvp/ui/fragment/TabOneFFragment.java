@@ -224,6 +224,7 @@ public class TabOneFFragment extends BaseFragment<TabOneFPresenter> implements T
                 adapter.addData(datas);
             } else {
                 adapter.setNewData(datas);
+                scrollToTop();
             }
         }
     }

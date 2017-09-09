@@ -16,6 +16,8 @@ import com.king.practices.mvp.contract.GankDetailContract;
 import com.king.practices.mvp.model.api.service.Cateory;
 import com.king.practices.mvp.model.entity.Gank;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import me.jessyan.rxerrorhandler.core.RxErrorHandler;
@@ -31,6 +33,7 @@ public class GankDetailPresenter extends BasePresenter<GankDetailContract.Model,
     private AppManager mAppManager;
     private Application mApplication;
     private ImageLoader imageLoader;
+    private Gank gank;
 
     @Inject
     public GankDetailPresenter(GankDetailContract.Model model, GankDetailContract.View rootView, RxErrorHandler handler
@@ -58,20 +61,34 @@ public class GankDetailPresenter extends BasePresenter<GankDetailContract.Model,
     public void getData(Intent intent) {
         Preconditions.checkNotNull(intent);
         String id = intent.getStringExtra("id");
-        Gank gank = DBManager.getGankDao().queryBuilder().where(GankDao.Properties._id.eq(id)).unique();
+        gank = DBManager.getGankDao().queryBuilder().where(GankDao.Properties._id.eq(id)).unique();
         if (gank == null) {
             ArmsUtils.snackbarText("未知的Id");
             mRootView.killMyself();
         } else {
             if (Cateory.FULI.getType().equals(gank.getType())) {
                 //福利视图
-                mRootView.updataView(0,gank.getUrl());
+                mRootView.updataView(0, gank.getUrl());
             } else {
                 //webview视图
-                mRootView.updataView(1,gank.getUrl());
+                mRootView.updataView(1, gank.getUrl());
             }
 
         }
 
+    }
+
+    private int offset=0;
+    public List<Gank> getFuliData() {
+        List<Gank> list = DBManager.getGankDao()
+                .queryBuilder()
+                .where(
+                        GankDao.Properties.Type.eq(Cateory.FULI.getType())
+                )
+                .offset(offset += 20)
+                .limit(20)
+                .list();
+        list.add(0,gank);
+        return list;
     }
 }
