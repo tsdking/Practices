@@ -73,10 +73,9 @@ public class GankDetailPresenter extends BasePresenter<GankDetailContract.Model,
                 //webview视图
                 mRootView.updataView(1, gank.getUrl());
             }
-
         }
-
     }
+
 
     private int offset=0;
     public List<Gank> getFuliData() {
@@ -88,7 +87,9 @@ public class GankDetailPresenter extends BasePresenter<GankDetailContract.Model,
                 .offset(offset += 20)
                 .limit(20)
                 .list();
-        list.add(0,gank);
+        if (offset==0){
+            list.add(0,gank);
+        }
         return list;
     }
 }

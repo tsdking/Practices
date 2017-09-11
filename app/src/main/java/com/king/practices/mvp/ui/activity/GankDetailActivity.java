@@ -20,6 +20,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.jess.arms.base.BaseActivity;
 import com.jess.arms.di.component.AppComponent;
@@ -61,7 +62,6 @@ public class GankDetailActivity extends BaseActivity<GankDetailPresenter> implem
     TextView tvTitle;//标题
     @BindView(R.id.toolbar_ivmore)
     ImageView ivMark;//收藏
-//    @BindView(R.id.webview)
     WebView webView;//webView
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
@@ -124,7 +124,6 @@ public class GankDetailActivity extends BaseActivity<GankDetailPresenter> implem
         cardCallback.setOnSwipedListener(new OnSwipeListener() {
             @Override
             public void onSwiping(RecyclerView.ViewHolder viewHolder, float ratio, int direction) {
-
             }
 
             @Override
@@ -141,11 +140,19 @@ public class GankDetailActivity extends BaseActivity<GankDetailPresenter> implem
                     DBManager.getGankDao().insertOrReplace(gank);
                 }
                 Log.d(TAG, "onSwiped: " + o.toString());
+                if (adapter.getItemCount() == 3) {
+                    //加载更多
+                    adapter.addData(mPresenter.getFuliData());
+                    Log.d(TAG, "onSwiped: " + "加载更多" + adapter.getItemCount());
+                }
             }
 
             @Override
             public void onSwipedClear() {
-                Log.d(TAG, "onSwipedClear: ");
+                if (adapter.getItemCount() == 0) {
+                    Toast.makeText(GankDetailActivity.this, "没有更多数据", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
             }
         });
         final ItemTouchHelper touchHelper = new ItemTouchHelper(cardCallback);
@@ -205,10 +212,11 @@ public class GankDetailActivity extends BaseActivity<GankDetailPresenter> implem
         });
 
         webView.setDownloadListener(new DownloadListener() {
-            public void onDownloadStart(String paramAnonymousString1, String paramAnonymousString2, String paramAnonymousString3, String paramAnonymousString4, long paramAnonymousLong) {
+            @Override
+            public void onDownloadStart(String s, String s1, String s2, String s3, long l) {
                 Intent intent = new Intent();
                 intent.setAction("android.intent.action.VIEW");
-                intent.setData(Uri.parse(paramAnonymousString1));
+                intent.setData(Uri.parse(s));
                 launchActivity(intent);
                 killMyself();
             }
