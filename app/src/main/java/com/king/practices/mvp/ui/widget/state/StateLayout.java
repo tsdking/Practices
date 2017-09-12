@@ -1,10 +1,8 @@
 package com.king.practices.mvp.ui.widget.state;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
-import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -52,8 +50,7 @@ public class StateLayout extends FrameLayout {
 
 
     public StateLayout(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init(context, attrs);
+        this(context, attrs,0);
     }
 
     public StateLayout(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -63,13 +60,15 @@ public class StateLayout extends FrameLayout {
 
     private void init(Context context, AttributeSet attrs) {
         parseAttrs(context, attrs);
-
-        emptyView.setVisibility(View.GONE);
-
-        errorView.setVisibility(View.GONE);
-
-        progressView.setVisibility(View.GONE);
-
+        if (emptyView != null) {
+            emptyView.setVisibility(View.GONE);
+        }
+        if (errorView != null) {
+            errorView.setVisibility(View.GONE);
+        }
+        if (progressView != null) {
+            progressView.setVisibility(View.GONE);
+        }
         currentShowingView = contentView;
     }
 
@@ -98,7 +97,6 @@ public class StateLayout extends FrameLayout {
             progressTextView = (TextView) progressView.findViewById(R.id.progressTextView);
             progressContentView = progressView.findViewById(R.id.progress_content);
         }
-
         addView(progressView);
         /******************************************************************************************/
 
@@ -133,35 +131,35 @@ public class StateLayout extends FrameLayout {
     }
 
 
-    public static StateLayout wrap(Activity activity) {
-        return wrap(((ViewGroup)activity.findViewById(android.R.id.content)).getChildAt(0));
-    }
-    public static StateLayout wrap(Fragment fragment) {
-        return wrap(fragment.getView());
-    }
-    public static StateLayout wrap(View view) {
-        if (view == null) {
-            throw new RuntimeException("content view can not be null");
-        }
-        ViewGroup parent = (ViewGroup)view.getParent();
-        if (parent == null) {
-            throw new RuntimeException("parent view can not be null");
-        }
-        ViewGroup.LayoutParams lp = view.getLayoutParams();
-        int index = parent.indexOfChild(view);
-        parent.removeView(view);
-
-        StateLayout layout = new StateLayout(view.getContext());
-        parent.addView(layout, index, lp);
-        layout.addView(view);
-        layout.setContentView(view);
-        return layout;
-    }
-
-    private void setContentView(View view) {
-//        mContentId = view.getId();
-//        mLayouts.put(mContentId, view);
-    }
+//    public static StateLayout wrap(Activity activity) {
+//        return wrap(((ViewGroup)activity.findViewById(android.R.id.content)).getChildAt(0));
+//    }
+//    public static StateLayout wrap(Fragment fragment) {
+//        return wrap(fragment.getView());
+//    }
+//    public static StateLayout wrap(View view) {
+//        if (view == null) {
+//            throw new RuntimeException("content view can not be null");
+//        }
+//        ViewGroup parent = (ViewGroup)view.getParent();
+//        if (parent == null) {
+//            throw new RuntimeException("parent view can not be null");
+//        }
+//        ViewGroup.LayoutParams lp = view.getLayoutParams();
+//        int index = parent.indexOfChild(view);
+//        parent.removeView(view);
+//
+//        StateLayout layout = new StateLayout(view.getContext());
+//        parent.addView(layout, index, lp);
+//        layout.addView(view);
+//        layout.setContentView(view);
+//        return layout;
+//    }
+//
+//    private void setContentView(View view) {
+////        mContentId = view.getId();
+////        mLayouts.put(mContentId, view);
+//    }
 
 
     private void checkIsContentView(View view) {
