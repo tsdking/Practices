@@ -5,6 +5,34 @@
         <attr name="emptyDrawable" format="reference" />
         <attr name="progressView" format="reference" />
     </declare-styleable>
+
+
+    <declare-styleable name="XStateLayout">
+        <!-- 加载中布局资源id -->
+        <attr name="LoadingResId" format="reference"/>
+
+
+        <!-- 空布局资源id -->
+        <attr name="EmptyResId" format="reference"/>
+        <!-- 空布局图片 -->
+        <attr name="EmptyImage" format="reference"/>
+        <!-- 空布局文本 -->
+        <attr name="EmptyText" format="string"/>
+
+        <!-- 错误布局资源id -->
+        <attr name="ErrorResId" format="reference"/>
+        <!-- 错误布局图片 -->
+        <attr name="ErrorImage" format="reference"/>
+        <!-- 错误布局文本 -->
+        <attr name="ErrorText" format="string"/>
+
+        <!-- 文本颜色 -->
+        <attr name="llTextColor" format="color"/>
+        <!-- 文本尺寸 -->
+        <attr name="llTextSize" format="dimension"/>
+
+    </declare-styleable>
+
     <!--SuperTextView-->
     <declare-styleable name="SuperTextView">
         <attr name="corner" format="dimension"/>
