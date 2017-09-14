@@ -1,81 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+
     <declare-styleable name="StateLayout">
-        <attr name="errorDrawable" format="reference" />
-        <attr name="emptyDrawable" format="reference" />
-        <attr name="progressView" format="reference" />
-    </declare-styleable>
-
-
-    <declare-styleable name="XStateLayout">
-        <!-- 加载中布局资源id -->
-        <attr name="LoadingResId" format="reference"/>
-
-
         <!-- 空布局资源id -->
-        <attr name="EmptyResId" format="reference"/>
+        <attr name="EmptyResId" format="reference" />
         <!-- 空布局图片 -->
-        <attr name="EmptyImage" format="reference"/>
+        <attr name="EmptyImageResId" format="reference" />
         <!-- 空布局文本 -->
-        <attr name="EmptyText" format="string"/>
+        <attr name="EmptyText" format="string" />
 
         <!-- 错误布局资源id -->
-        <attr name="ErrorResId" format="reference"/>
+        <attr name="ErrorResId" format="reference" />
         <!-- 错误布局图片 -->
-        <attr name="ErrorImage" format="reference"/>
+        <attr name="ErrorImageResId" format="reference" />
         <!-- 错误布局文本 -->
-        <attr name="ErrorText" format="string"/>
-
+        <attr name="ErrorText" format="string" />
         <!-- 文本颜色 -->
-        <attr name="llTextColor" format="color"/>
+        <attr name="TextColor" format="color" />
         <!-- 文本尺寸 -->
-        <attr name="llTextSize" format="dimension"/>
+        <attr name="TextSize" format="dimension" />
+
+        <!-- 加载中布局资源id -->
+        <attr name="ProgressResId" format="reference" />
 
     </declare-styleable>
-
     <!--SuperTextView-->
     <declare-styleable name="SuperTextView">
-        <attr name="corner" format="dimension"/>
-        <attr name="left_top_corner" format="boolean"/>
-        <attr name="right_top_corner" format="boolean"/>
-        <attr name="left_bottom_corner" format="boolean"/>
-        <attr name="right_bottom_corner" format="boolean"/>
-        <attr name="solid" format="reference|color"/>
-        <attr name="stroke_width" format="dimension"/>
-        <attr name="stroke_color" format="reference|color"/>
-        <attr name="state_drawable" format="reference"/>
-        <attr name="state_drawable_width" format="dimension"/>
-        <attr name="state_drawable_height" format="dimension"/>
-        <attr name="state_drawable_padding_left" format="dimension"/>
-        <attr name="state_drawable_padding_top" format="dimension"/>
-        <attr name="isShowState" format="boolean"/>
-        <attr name="text_stroke" format="boolean"/>
-        <attr name="text_stroke_color" format="reference|color"/>
-        <attr name="text_stroke_width" format="dimension"/>
-        <attr name="text_fill_color" format="reference|color"/>
-        <attr name="autoAdjust" format="boolean"/>
+        <attr name="corner" format="dimension" />
+        <attr name="left_top_corner" format="boolean" />
+        <attr name="right_top_corner" format="boolean" />
+        <attr name="left_bottom_corner" format="boolean" />
+        <attr name="right_bottom_corner" format="boolean" />
+        <attr name="solid" format="reference|color" />
+        <attr name="stroke_width" format="dimension" />
+        <attr name="stroke_color" format="reference|color" />
+        <attr name="state_drawable" format="reference" />
+        <attr name="state_drawable_width" format="dimension" />
+        <attr name="state_drawable_height" format="dimension" />
+        <attr name="state_drawable_padding_left" format="dimension" />
+        <attr name="state_drawable_padding_top" format="dimension" />
+        <attr name="isShowState" format="boolean" />
+        <attr name="text_stroke" format="boolean" />
+        <attr name="text_stroke_color" format="reference|color" />
+        <attr name="text_stroke_width" format="dimension" />
+        <attr name="text_fill_color" format="reference|color" />
+        <attr name="autoAdjust" format="boolean" />
         <attr name="state_drawable_mode" format="enum">
-            <enum name="left" value="0"/>
-            <enum name="top" value="1"/>
-            <enum name="right" value="2"/>
-            <enum name="bottom" value="3"/>
-            <enum name="center" value="4"/>
-            <enum name="fill" value="5"/>
-            <enum name="leftTop" value="6"/>
-            <enum name="rightTop" value="7"/>
-            <enum name="leftBottom" value="8"/>
-            <enum name="rightBottom" value="9"/>
+            <enum name="left" value="0" />
+            <enum name="top" value="1" />
+            <enum name="right" value="2" />
+            <enum name="bottom" value="3" />
+            <enum name="center" value="4" />
+            <enum name="fill" value="5" />
+            <enum name="leftTop" value="6" />
+            <enum name="rightTop" value="7" />
+            <enum name="leftBottom" value="8" />
+            <enum name="rightBottom" value="9" />
         </attr>
-        <attr name="shaderStartColor" format="reference|color"/>
-        <attr name="shaderEndColor" format="reference|color"/>
+        <attr name="shaderStartColor" format="reference|color" />
+        <attr name="shaderEndColor" format="reference|color" />
         <attr name="shaderMode" format="enum">
-            <enum name="topToBottom" value="0"/>
-            <enum name="bottomToTop" value="1"/>
-            <enum name="leftTopRight" value="2"/>
-            <enum name="rightToLeft" value="3"/>
+            <enum name="topToBottom" value="0" />
+            <enum name="bottomToTop" value="1" />
+            <enum name="leftTopRight" value="2" />
+            <enum name="rightToLeft" value="3" />
         </attr>
-        <attr name="shaderEnable" format="boolean"/>
-        <attr name="pressBgColor" format="reference|color"/>
-        <attr name="pressTextColor" format="reference|color"/>
+        <attr name="shaderEnable" format="boolean" />
+        <attr name="pressBgColor" format="reference|color" />
+        <attr name="pressTextColor" format="reference|color" />
     </declare-styleable>
 </resources>

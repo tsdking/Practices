@@ -19,6 +19,7 @@ import javax.inject.Inject;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import me.jessyan.rxerrorhandler.core.RxErrorHandler;
@@ -85,7 +86,13 @@ public class TabOneFPresenter extends BasePresenter<TabOneFContract.Model, TabOn
                             }
                         }
                     })
+
                     .subscribe(new ErrorHandleSubscriber<BaseGank<GankEveryDay>>(mErrorHandler) {
+                        @Override
+                        public void onSubscribe(@NonNull Disposable d) {
+                            addDispose(d);
+                        }
+
                         @Override
                         public void onNext(@NonNull BaseGank<GankEveryDay> ganks) {
                             if (datas == null) {

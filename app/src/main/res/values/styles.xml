@@ -20,23 +20,6 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
-    <style name="XStateLayout">
-        <item name="EmptyResId">@layout/activity_main</item>
-        <item name="LoadingResId">@layout/activity_main</item>
-        <item name="ErrorResId">@layout/activity_main</item>
 
-        <item name="TextColor">#999999</item>
-        <item name="TextSize">16sp</item>
-
-        <item name="ButtonTextColor">#999999</item>
-        <item name="ButtonTextSize">16sp</item>
-        <item name="llButtonBackground">@drawable/nav_tab</item>
-
-        <item name="EmptyImage">@null</item>
-        <item name="EmptyText">暂无数据</item>
-        <item name="ErrorImage">@null</item>
-        <item name="ErrorText">无网络连接，请检查您的网络...</item>
-        <item name="RetryText">加载失败，点击重试~~</item>
-    </style>
 
 </resources>

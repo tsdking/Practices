@@ -16,6 +16,7 @@ import com.king.practices.mvp.contract.GankDetailContract;
 import com.king.practices.mvp.model.api.service.Cateory;
 import com.king.practices.mvp.model.entity.Gank;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -78,8 +79,17 @@ public class GankDetailPresenter extends BasePresenter<GankDetailContract.Model,
 
 
     private int offset=0;
+    private List<Gank> list;
     public List<Gank> getFuliData() {
-        List<Gank> list = DBManager.getGankDao()
+        if (list == null) {
+            list=new ArrayList<>();
+        }else{
+            list.clear();
+        }
+        if (offset==0){
+            list.add(0,gank);
+        }
+        list = DBManager.getGankDao()
                 .queryBuilder()
                 .where(
                         GankDao.Properties.Type.eq(Cateory.FULI.getType())
@@ -87,9 +97,6 @@ public class GankDetailPresenter extends BasePresenter<GankDetailContract.Model,
                 .offset(offset += 20)
                 .limit(20)
                 .list();
-        if (offset==0){
-            list.add(0,gank);
-        }
         return list;
     }
 }

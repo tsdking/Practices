@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- 空布局图片id -->
-    <item type="id" name="xstate_empty_image" />
+    <item type="id" name="state_empty_image" />
     <!-- 空布局文字id -->
-    <item type="id" name="xstate_empty_text" />
+    <item type="id" name="state_empty_text" />
+
     <!-- 错误布局图片id -->
-    <item type="id" name="xstate_error_iamge" />
+    <item type="id" name="state_error_image" />
     <!-- 错误布局文字id -->
-    <item type="id" name="xstate_error_text" />
+    <item type="id" name="state_error_text" />
+
     <!-- 加载中布局文字id -->
-    <item type="id" name="xstate_progress_text" />
+    <item type="id" name="state_progress_text" />
     <!-- 加载中布局view的id -->
-    <item type="id" name="xstate_progress_view" />
+    <item type="id" name="state_progress_image" />
+
 </resources>
