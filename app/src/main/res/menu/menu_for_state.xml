@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_tab1"
+        android:title="正常的" />
+    <item
+        android:id="@+id/nav_tab2"
+        android:title="加载中" />
+    <item
+        android:id="@+id/nav_tab3"
+        android:title="空数据" />
+    <item
+        android:id="@+id/nav_tab4"
+        android:title="有错误" />
+</menu>

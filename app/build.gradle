@@ -90,6 +90,7 @@ dependencies {
     compile 'me.jessyan:arms:2.2.0'
     compile 'org.greenrobot:greendao:3.1.1'
     compile 'me.yuqirong:cardswipelayout:1.0.0'
+    compile 'com.lufficc:stateLayout:0.1.1'
     debugCompile rootProject.ext.dependencies["canary-debug"]
     releaseCompile rootProject.ext.dependencies["canary-release"]
     testCompile rootProject.ext.dependencies["canary-release"]

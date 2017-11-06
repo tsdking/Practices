@@ -13,7 +13,6 @@ import com.king.practices.mvp.contract.SplashContract;
 import com.king.practices.mvp.presenter.SplashPresenter;
 
 public class SplashActivity extends BaseActivity<SplashPresenter> implements SplashContract.View {
-
     @Override
     public void setupActivityComponent(AppComponent appComponent) {
         DaggerSplashComponent.builder()
@@ -31,7 +30,32 @@ public class SplashActivity extends BaseActivity<SplashPresenter> implements Spl
     @Override
     public void initData(Bundle savedInstanceState) {
         mPresenter.initData();
+        //测试 SpannableStringUtils
+//        TextView textView = (TextView) findViewById(R.id.tv);
+//        textView.setMovementMethod(LinkMovementMethod.getInstance());
+//        SpannableStringBuilder stringBuilder = new SpannableStringUtils.Builder().append("喜欢你")
+//                .setForegroundColor(Color.BLUE)
+//                .append("满口讲胡话")
+//                .setAlign(Layout.Alignment.ALIGN_CENTER)
+//                .setBackgroundColor(Color.GREEN)
+//                .append("你和我")
+//                .setBold()
+//                .append(",谢谢!")
+//                .setClickSpan(new ClickableSpan() {
+//                    @Override
+//                    public void onClick(View view) {
+//                        Toast.makeText(SplashActivity.this, "谢谢", Toast.LENGTH_SHORT).show();
+//                    }
+//                })
+//                .setFontSize(30)
+//                .setUnderline()
+//                .setForegroundColor(Color.BLUE)
+//                .append("")
+//                .create();
+//        textView.setText(stringBuilder);
+
     }
+
 
     @Override
     public void showLoading() {

@@ -17,6 +17,6 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/state_progress_image"
         android:layout_centerHorizontal="true"
-        android:text=""
+        android:text="加载中"
         tools:text="加载中" />
 </RelativeLayout>

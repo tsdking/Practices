@@ -16,6 +16,6 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/state_empty_image"
         android:layout_centerHorizontal="true"
-        android:text=""
+        android:text="没有数据"
         tools:text="没有数据" />
 </RelativeLayout>

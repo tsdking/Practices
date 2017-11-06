@@ -78,7 +78,7 @@ public class SplashPresenter extends BasePresenter<SplashContract.Model, SplashC
                             List<String> results = listBaseGank.getResults();
                             GankHistoryDate historyDate;
                             Timber.tag("xqf").d("db_insert_begin:" + System.currentTimeMillis());
-                            if (DBManager.getGankHistoryDao().count() == 0) {
+                            if (DBManager.getGankHistoryDao().count() <= 2) {
                                 for (String res : results) {
                                     historyDate = new GankHistoryDate();
                                     historyDate.setMDate(res);
@@ -86,7 +86,7 @@ public class SplashPresenter extends BasePresenter<SplashContract.Model, SplashC
                                     Timber.tag("xqf").d("db_insert:" + res);
                                 }
                             } else {
-                                for (int i = 0; i < 5; i++) {
+                                for (int i = 0; i < 2; i++) {
                                     historyDate = new GankHistoryDate();
                                     historyDate.setMDate(results.get(i));
                                     DBManager.getGankHistoryDao().insertOrReplace(historyDate);
